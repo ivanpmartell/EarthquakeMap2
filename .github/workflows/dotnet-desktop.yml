@@ -50,7 +50,7 @@ jobs:
 
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
 
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
@@ -60,8 +60,6 @@ jobs:
       Test_Project_Path: EarthquakeMap2\EarthquakeMap2.csproj   # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       Wap_Project_Directory: EarthquakeMap2                     # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       Wap_Project_Path: EarthquakeMap2\EarthquakeMap2.csproj    # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
-      Build_Type: Release
-      Platform: win-x64
       
 
     steps:
@@ -95,11 +93,15 @@ jobs:
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: dotnet publish $env:Solution_Name -c $env:Build_Type -r $env:Platform
+      run: dotnet publish $env:Solution_Name -c $env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Package
-        path: ${{ env.Wap_Project_Directory }}\${{ env.Build_Type }}
+        path: ${{ env.Wap_Project_Directory }}\${{ env.Configuration }}
+      env:
+        Configuration: ${{ matrix.configuration }}
