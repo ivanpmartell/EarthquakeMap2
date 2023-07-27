@@ -102,4 +102,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Package
-        path: ${{ env.Wap_Project_Directory }}\${{ env:Build_Type }}
+        path: ${{ env.Wap_Project_Directory }}\${{ env.Build_Type }}
